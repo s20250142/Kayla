@@ -354,6 +354,7 @@ window.CURIO_EXTRA = (function () {
         sentence: "___ platforms explain their recommendations, users cannot judge what they are not shown.",
         options: ["Although", "Unless", "Because"],
         answer: 1,
+        hint: "The missing word sets a condition that must happen first.",
         explain: "“Unless” introduces the condition that must happen for the result to change: without explanation, users cannot judge."
       },
       write: {
@@ -395,6 +396,7 @@ window.CURIO_EXTRA = (function () {
         sentence: "___ AI tutors are useful, they cannot replace a teacher who knows the student.",
         options: ["Unless", "Because", "Although"],
         answer: 2,
+        hint: "You need a contrast: useful, but not a replacement.",
         explain: "“Although” signals a contrast: AI tutors are useful, but there is a limitation."
       },
       write: {
@@ -436,6 +438,7 @@ window.CURIO_EXTRA = (function () {
         sentence: "___ a video looks completely real, it may be entirely synthetic.",
         options: ["So that", "Even though", "Unless"],
         answer: 1,
+        hint: "You need a surprising contrast: it looks real, but it may not be.",
         explain: "“Even though” introduces a surprising contrast: realism does not guarantee authenticity."
       },
       write: {
@@ -458,6 +461,7 @@ window.CURIO_EXTRA = (function () {
       minutes: 9,
       backdrop: "Lord Ashworth has spent seven years writing The Cartographer's Daughter. His rival, Julian Cross, has published a novel every spring — and this year, the reviews were cruel. Tonight, a storm has cut the telephone line. At breakfast, Ashworth's study is found open. The only manuscript of Chapter Twelve is missing, and the grate is full of ash.",
       brief: "Read the four clues, study the three alibis, then make your accusation. A good detective separates what is strange from what is impossible.",
+      hint: "One alibi is impossible because of a document. Find the person whose story a railway telegram destroys.",
       clues: [
         { id: "page", emoji: "🔥", title: "A burned page", text: "In the study grate, one corner of paper survived: “Chapter Twelve: The Cartographer's—”. The rest is ash. The fire is still warm." },
         { id: "telegram", emoji: "📠", title: "A telegram", text: "Found in the hall: “GREAT EASTERN RAILWAY. ALL SERVICES SUSPENDED DUE TO STORM. PASSENGERS ADVISED TO STAY OVERNIGHT.” It is addressed to J. Cross, Holloway Hall, 8:15 p.m." },
@@ -503,6 +507,7 @@ window.CURIO_EXTRA = (function () {
       minutes: 10,
       backdrop: "At the Musikverein, the young violinist Klara Weiss is about to make her debut. During the interval, her violin disappears from the locked dressing room. It is not a Stradivarius, but it belonged to her mother, and the concert cannot continue without it. Outside, snow falls on the Ringstrasse. Inside, three people had a reason to be near the corridor.",
       brief: "The room was locked. That does not mean nobody entered. Examine the clues, test each alibi, then name the thief.",
+      hint: "Someone claims to have been practising for fifty minutes. The piano tuner heard no music at all.",
       clues: [
         { id: "glove", emoji: "🧤", title: "A caught glove", text: "A silk glove is trapped in the hinge of the dressing-room door. Inside the cuff, embroidered in gold thread: the letter L." },
         { id: "keylog", emoji: "🗝️", title: "The key ledger", text: "The spare key was signed out at 7:45 p.m. The signature reads “M. Laurent”. It was never returned to the hook." },

@@ -106,10 +106,12 @@
       streak: { count: 0, best: 0, last: null },
       stats: { correct: 0, total: 0, reviews: 0 },
       flags: { perfect: false },
+      difficulty: { little: "standard", library: "standard", future: "standard" },
       little: { stars: 0, activities: {}, days: {}, stickers: [] },
       chronicles: {
         started: false, chapter: 0, resources: null, choices: [],
-        pendingChoice: null, completed: false, ending: null, xpChapters: []
+        pendingChoice: null, completed: false, ending: null, xpChapters: [],
+        difficulty: "standard"
       },
       ai: { briefings: {} },
       whodunit: { cases: {} },
@@ -146,11 +148,17 @@
       Object.keys(data.lessons).forEach(function (id) {
         var rec = data.lessons[id];
         if (!C.lessonById(id) || !rec || typeof rec !== "object") return;
+        var recTotal = Math.max(1, Number(rec.total) || 4);
+        var recBest = Math.max(0, Number(rec.best) || 0);
+        var recPct = Math.max(0, Math.min(100, Number(rec.bestPct) || Math.round((recBest / recTotal) * 100)));
+        var recDiff = DIFF_LEVELS.indexOf(rec.difficulty) !== -1 ? rec.difficulty : "standard";
         s.lessons[id] = {
           attempts: Math.max(0, Number(rec.attempts) || 0),
-          best: Math.max(0, Number(rec.best) || 0),
+          best: recBest,
+          bestPct: recPct,
           last: Math.max(0, Number(rec.last) || 0),
-          total: Math.max(0, Number(rec.total) || 4),
+          total: recTotal,
+          difficulty: recDiff,
           completedAt: rec.completedAt || new Date().toISOString(),
           minutes: Math.max(0, Number(rec.minutes) || 0)
         };
@@ -218,6 +226,13 @@
       s.flags = { perfect: !!data.flags.perfect };
     }
 
+    if (data.difficulty && typeof data.difficulty === "object") {
+      ["little", "library", "future"].forEach(function (area) {
+        var v = data.difficulty[area];
+        if (DIFF_LEVELS.indexOf(v) !== -1) s.difficulty[area] = v;
+      });
+    }
+
     if (data.little && typeof data.little === "object") {
       var lit = data.little;
       s.little.stars = Math.max(0, Math.floor(Number(lit.stars) || 0));
@@ -255,6 +270,7 @@
       s.chronicles.started = !!ch.started;
       s.chronicles.chapter = Math.min(EXTRA.chronicles.chapters.length - 1, Math.max(0, Math.floor(Number(ch.chapter) || 0)));
       s.chronicles.completed = !!ch.completed;
+      s.chronicles.difficulty = DIFF_LEVELS.indexOf(ch.difficulty) !== -1 ? ch.difficulty : "standard";
       s.chronicles.pendingChoice = Number.isInteger(ch.pendingChoice) ? ch.pendingChoice : null;
       if (Array.isArray(ch.choices)) {
         s.chronicles.choices = ch.choices.slice(0, 8).map(function (n) { return Math.max(0, Math.floor(Number(n) || 0)); });
@@ -324,7 +340,8 @@
           qIndex: Math.min(maxQ, Math.max(0, Number(c.qIndex) || 0)),
           answers: Array.isArray(c.answers) ? c.answers.map(Number).slice(0, 6) : [],
           solved: !!c.solved,
-          score: Math.max(0, Number(c.score) || 0)
+          score: Math.max(0, Number(c.score) || 0),
+          hintShown: !!c.hintShown
         };
       });
     }
@@ -436,6 +453,42 @@
     if (currentStreak() > 0) return { label: "Waiting for you", detail: "A few minutes today would make it happy." };
     return { label: "Sleepy", detail: "The nest is warm. Come back and learn something." };
   }
+  var DIFF_LEVELS = ["easy", "standard", "hard"];
+  var DIFF_LABELS = { easy: "Easy", standard: "Standard", hard: "Challenge" };
+
+  function diffFor(area) {
+    return state.difficulty && DIFF_LEVELS.indexOf(state.difficulty[area]) !== -1
+      ? state.difficulty[area]
+      : "standard";
+  }
+  function diffLabel(level) {
+    return DIFF_LABELS[level] || "Standard";
+  }
+  function difficultyControl(area, note) {
+    var current = diffFor(area);
+    return '<div class="difficulty-bar reveal">' +
+      '<div class="diff-control">' +
+        '<span class="diff-label">' + icon("spark") + " Difficulty</span>" +
+        '<span class="diff-options">' + DIFF_LEVELS.map(function (level) {
+          return '<button class="diff-btn' + (level === current ? " active" : "") + '" ' +
+            'data-action="set-difficulty" data-area="' + area + '" data-level="' + level + '" ' +
+            'aria-pressed="' + (level === current ? "true" : "false") + '">' + diffLabel(level) + "</button>";
+        }).join("") + "</span>" +
+      "</div>" +
+      '<span class="diff-note">' + esc(note) + "</span>" +
+    "</div>";
+  }
+  function setDifficulty(area, level) {
+    if (["little", "library", "future"].indexOf(area) === -1) return;
+    if (DIFF_LEVELS.indexOf(level) === -1) return;
+    state.difficulty[area] = level;
+    if (area === "little" && littleRun) littleRun = newLittleRun(littleRun.activity, level);
+    if (area === "library" && run) run = newRun(run.lesson);
+    saveState();
+    render();
+    toast("Difficulty set to " + diffLabel(level) + ".");
+  }
+
   function littlePlays() {
     return Object.keys(state.little.activities).reduce(function (n, id) {
       return n + (state.little.activities[id].plays || 0);
@@ -465,7 +518,7 @@
   }
   function caseState(id) {
     if (!state.whodunit.cases[id]) {
-      state.whodunit.cases[id] = { qIndex: 0, answers: [], solved: false, score: 0 };
+      state.whodunit.cases[id] = { qIndex: 0, answers: [], solved: false, score: 0, hintShown: false };
     }
     return state.whodunit.cases[id];
   }
@@ -809,21 +862,21 @@
           '<div class="stage-band-grid">' +
             '<a class="stage-tile tile-little" href="#/little">' +
               '<span class="stage-tile-emoji">🌞</span>' +
-              '<span class="stage-tile-label">Stage 1 · Ages 3–6</span>' +
+              '<span class="stage-tile-label">Stage 1 · Ages 3–6 · ' + diffLabel(diffFor("little")) + "</span>" +
               "<strong>Little Curio</strong>" +
               "<span class=\"stage-tile-desc\">Sensory play, first words, one sticker a day.</span>" +
               '<span class="stage-tile-meta">' + (littleTodayDone ? "Played today ✓" : "Ready to play") + " · ⭐ " + state.little.stars + "</span>" +
             "</a>" +
             '<a class="stage-tile tile-library" href="#/library">' +
               '<span class="stage-tile-emoji">📖</span>' +
-              '<span class="stage-tile-label">Stage 2 · Reading & words</span>' +
+              '<span class="stage-tile-label">Stage 2 · Reading & words · ' + diffLabel(diffFor("library")) + "</span>" +
               "<strong>Curiosity Library</strong>" +
               "<span class=\"stage-tile-desc\">Fourteen true stories with five words each.</span>" +
               '<span class="stage-tile-meta">' + doneCount + " of " + ALL_LESSONS.length + " curiosities finished</span>" +
             "</a>" +
             '<a class="stage-tile tile-worlds" href="#/adventures">' +
               '<span class="stage-tile-emoji">🚀</span>' +
-              '<span class="stage-tile-label">Stage 3 · Advanced adventures</span>' +
+              '<span class="stage-tile-label">Stage 3 · Advanced adventures · ' + diffLabel(diffFor("future")) + "</span>" +
               "<strong>Future Worlds</strong>" +
               "<span class=\"stage-tile-desc\">Colony survival, AI debates, mystery cases.</span>" +
               '<span class="stage-tile-meta">' + ((state.chronicles.completed ? 1 : 0) + stageAI + stageSolved) + " of 6 adventures complete</span>" +
@@ -907,12 +960,13 @@
     }).slice(0, 3);
 
     return '<div class="recent-list">' + items.map(function (x) {
-      var q = x.lesson.quiz.length;
+      var total = x.rec.total || x.lesson.quiz.length;
+      var pct = x.rec.bestPct != null ? x.rec.bestPct : Math.round((x.rec.best / total) * 100);
       return '<a class="recent" href="#/lesson/' + x.lesson.id + '">' +
         '<span class="recent-emoji" aria-hidden="true">' + x.lesson.emoji + "</span>" +
         '<span class="recent-body"><strong>' + esc(x.lesson.title) + "</strong>" +
-          "<small>" + esc(C.categoryById(x.lesson.category).name) + " · best " + x.rec.best + "/" + q + " · " + fmtDate(dateKey(new Date(x.rec.completedAt))) + "</small></span>" +
-        '<span class="recent-score">' + Math.round((x.rec.best / q) * 100) + "%</span>" +
+          "<small>" + esc(C.categoryById(x.lesson.category).name) + " · best " + pct + "% · " + fmtDate(dateKey(new Date(x.rec.completedAt))) + "</small></span>" +
+        '<span class="recent-score">' + pct + "%</span>" +
       "</a>";
     }).join("") + "</div>";
   }
@@ -945,6 +999,8 @@
           "</div>" +
           '<div class="progress-pill"><strong>' + completedCount() + "/" + ALL_LESSONS.length + "</strong><span>explored</span></div>" +
         "</header>" +
+
+        difficultyControl("library", "Easy: 3 questions and words already open · Standard: 4 questions · Challenge: 5 questions with a word-recall task.") +
 
         '<div class="toolbar reveal">' +
           '<label class="search">' + icon("search") +
@@ -988,8 +1044,9 @@
     return list.map(function (l) {
       var cat = C.categoryById(l.category);
       var rec = state.lessons[l.id];
+      var bestPct = rec ? (rec.bestPct != null ? rec.bestPct : Math.round((rec.best / (rec.total || l.quiz.length)) * 100)) : 0;
       var status = rec
-        ? '<span class="lesson-status done">' + icon("check") + " best " + rec.best + "/" + l.quiz.length + "</span>"
+        ? '<span class="lesson-status done">' + icon("check") + " best " + bestPct + "%</span>"
         : '<span class="lesson-status new">New</span>';
       return '<a class="lesson-card" href="#/lesson/' + l.id + '">' +
         '<span class="lesson-thumb cat-' + l.category + '" aria-hidden="true">' + l.emoji + "</span>" +
@@ -1027,15 +1084,61 @@
    * ------------------------------------------------------------------ */
   var run = null;
 
+  function escapeRegExp(text) {
+    return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  function makeClozeQuestion(lesson) {
+    for (var i = 0; i < lesson.vocab.length; i++) {
+      var v = lesson.vocab[i];
+      var re = new RegExp("\\b" + escapeRegExp(v.w) + "\\b", "i");
+      if (!re.test(v.ex)) continue;
+      var others = lesson.vocab.filter(function (x) { return x.w !== v.w; })
+        .slice(0, 3).map(function (x) { return x.w; });
+      return {
+        q: "Which word completes this sentence? “" + v.ex.replace(re, "_____") + "”",
+        options: [v.w].concat(others),
+        answer: 0,
+        explain: "This sentence comes from the reading: “" + v.ex + "”."
+      };
+    }
+    return null;
+  }
+
+  function buildLessonQuestions(lesson, level) {
+    var questions = lesson.quiz.map(function (q) {
+      return {
+        q: q.q,
+        options: q.options.slice(),
+        answer: q.answer,
+        explain: q.explain || ("The correct answer is " + q.options[q.answer] + ".")
+      };
+    });
+    if (level === "easy") return questions.slice(0, 3);
+    if (level === "hard") {
+      var cloze = makeClozeQuestion(lesson);
+      if (cloze) questions.push(cloze);
+    }
+    return questions;
+  }
+
   function newRun(lesson) {
+    var level = diffFor("library");
+    var questions = buildLessonQuestions(lesson, level);
+    var revealed = {};
+    if (level === "easy") {
+      lesson.vocab.forEach(function (_, i) { revealed[i] = true; });
+    }
     return {
       lesson: lesson,
+      level: level,
+      questions: questions,
       stage: 0,
-      revealed: {},
+      revealed: revealed,
       qIndex: 0,
       picked: null,
       answers: [],
-      orders: lesson.quiz.map(function (q) {
+      orders: questions.map(function (q) {
         return shuffle(q.options.map(function (_, i) { return i; }));
       }),
       score: 0,
@@ -1060,7 +1163,7 @@
         '<header class="lesson-head reveal">' +
           '<div class="lesson-emoji cat-' + lesson.category + '" aria-hidden="true">' + lesson.emoji + "</div>" +
           "<div>" +
-            '<span class="eyebrow">' + cat.emoji + " " + esc(cat.name) + " · " + lesson.minutes + " min</span>" +
+            '<span class="eyebrow">' + cat.emoji + " " + esc(cat.name) + " · " + lesson.minutes + ' min · <span class="level-chip">' + diffLabel(run.level) + "</span></span>" +
             "<h1>" + esc(lesson.title) + "</h1>" +
             '<p class="sub">' + esc(lesson.hook) + "</p>" +
           "</div>" +
@@ -1115,7 +1218,11 @@
   function wordsStage(lesson) {
     var revealedCount = Object.keys(run.revealed).length;
     return '<section class="words-stage reveal">' +
-      '<div class="stage-intro"><h2>Five words worth keeping</h2><p>Tap a card to reveal the meaning. Say each word out loud — pronunciation is part of knowing it.</p></div>' +
+      '<div class="stage-intro"><h2>Five words worth keeping</h2><p>' +
+        (run.level === "easy"
+          ? "The meanings are open on Easy. Say each word out loud — pronunciation is part of knowing it."
+          : "Tap a card to reveal the meaning. Say each word out loud — pronunciation is part of knowing it.") +
+      "</p></div>" +
       '<div class="word-grid">' + lesson.vocab.map(function (v, i) {
         var id = lesson.id + "::" + v.w;
         var inBank = !!state.words[id];
@@ -1141,21 +1248,22 @@
   }
 
   function quizStage(lesson) {
-    var q = lesson.quiz[run.qIndex];
+    var total = run.questions.length;
+    var q = run.questions[run.qIndex];
     var answered = run.picked !== null;
     var order = run.orders[run.qIndex];
     var correctAt = order.indexOf(q.answer);
     var right = answered && run.picked === correctAt;
     var letters = ["A", "B", "C", "D"];
-    var nextLabel = run.qIndex === lesson.quiz.length - 1 ? "See results" : "Next question";
+    var nextLabel = run.qIndex === total - 1 ? "See results" : "Next question";
 
     return '<section class="quiz reveal">' +
-      '<div class="quiz-top"><span class="eyebrow">Question ' + (run.qIndex + 1) + " of " + lesson.quiz.length + "</span>" +
+      '<div class="quiz-top"><span class="eyebrow">Question ' + (run.qIndex + 1) + " of " + total + "</span>" +
         '<span class="quiz-score">' + run.answers.reduce(function (n, a, i) {
           if (a === undefined) return n;
-          return n + (a === run.orders[i].indexOf(lesson.quiz[i].answer) ? 1 : 0);
+          return n + (a === run.orders[i].indexOf(run.questions[i].answer) ? 1 : 0);
         }, 0) + " correct</span></div>" +
-      '<div class="quiz-bar"><i style="width:' + ((run.qIndex + (answered ? 1 : 0)) / lesson.quiz.length) * 100 + '%"></i></div>' +
+      '<div class="quiz-bar"><i style="width:' + ((run.qIndex + (answered ? 1 : 0)) / total) * 100 + '%"></i></div>' +
 
       '<h2 class="quiz-q">' + esc(q.q) + "</h2>" +
       '<div class="options">' + order.map(function (orig, i) {
@@ -1182,7 +1290,8 @@
   }
 
   function resultStage(lesson) {
-    var total = lesson.quiz.length;
+    var questions = run.questions;
+    var total = questions.length;
     var pct = Math.round((run.score / total) * 100);
     var message;
     if (pct === 100) message = "Flawless. This one is yours.";
@@ -1198,7 +1307,7 @@
       '<div class="result-top">' +
         '<div class="score-ring" style="--p:' + pct + '"><div class="score-inner"><strong>' + run.score + "/" + total + "</strong><span>correct</span></div></div>" +
         "<div>" +
-          '<span class="eyebrow">' + lesson.emoji + " " + esc(C.categoryById(lesson.category).name) + " · complete</span>" +
+          '<span class="eyebrow">' + lesson.emoji + " " + esc(C.categoryById(lesson.category).name) + " · " + diffLabel(run.level) + " · complete</span>" +
           "<h2>" + message + "</h2>" +
           '<p class="sub">' + (run.perfect ? "Perfect score bonus included." : "Every attempt sharpens the memory.") + "</p>" +
         "</div>" +
@@ -1211,7 +1320,7 @@
         '<div><strong>' + currentStreak() + "</strong><span>day streak</span></div>" +
       "</div>" +
 
-      '<ul class="result-list">' + lesson.quiz.map(function (q, i) {
+      '<ul class="result-list">' + questions.map(function (q, i) {
         var ok = run.answers[i] === run.orders[i].indexOf(q.answer);
         return "<li class=\"" + (ok ? "ok" : "no") + '"><span class="result-mark">' + (ok ? "✓" : "✗") + "</span>" +
           "<div><strong>" + esc(q.q) + "</strong>" +
@@ -1284,11 +1393,15 @@
   /* ------------------------------------------------------------------ *
    *  Lesson completion — the core progress write
    * ------------------------------------------------------------------ */
-  function completeLesson(lesson, answers, orders) {
-    var total = lesson.quiz.length;
+  function completeLesson(run) {
+    var lesson = run.lesson;
+    var questions = run.questions;
+    var answers = run.answers;
+    var orders = run.orders;
+    var total = questions.length;
     var score = 0;
     for (var i = 0; i < total; i++) {
-      var correctAt = orders && orders[i] ? orders[i].indexOf(lesson.quiz[i].answer) : lesson.quiz[i].answer;
+      var correctAt = orders && orders[i] ? orders[i].indexOf(questions[i].answer) : questions[i].answer;
       if (answers[i] === correctAt) score++;
     }
 
@@ -1297,11 +1410,16 @@
     var ratio = score / total;
     var now = Date.now();
 
-    var rec = state.lessons[lesson.id] || { attempts: 0, best: 0, last: 0, total: total, completedAt: null, minutes: 0 };
+    var rec = state.lessons[lesson.id] || { attempts: 0, best: 0, bestPct: 0, last: 0, total: total, completedAt: null, minutes: 0 };
+    var prevBest = rec.best || 0;
+    var prevTotal = rec.total || total;
+    var prevPct = rec.bestPct != null ? rec.bestPct : Math.round((prevBest / Math.max(1, prevTotal)) * 100);
     rec.attempts += 1;
-    rec.best = Math.max(rec.best, score);
+    rec.best = Math.max(prevBest, score);
+    rec.bestPct = Math.max(prevPct, Math.round((score / total) * 100));
     rec.last = score;
     rec.total = total;
+    rec.difficulty = run.level;
     rec.completedAt = new Date().toISOString();
     rec.minutes = lesson.minutes;
     state.lessons[lesson.id] = rec;
@@ -1783,6 +1901,8 @@
           '<p class="sub">A three-minute sensory game for every day. Big pictures, simple words, and a sticker to keep.</p>' +
         "</header>" +
 
+        difficultyControl("little", "Easy: 2 pictures · Standard: 3 pictures · Challenge: 3 pictures with labels hidden.") +
+
         '<section class="little-today reveal">' +
           '<div class="little-today-art">' + today.emoji + "</div>" +
           '<div class="little-today-body">' +
@@ -1838,9 +1958,21 @@
     updateDocumentTitle("Little Curio");
   }
 
-  function newLittleRun(activity) {
+  function newLittleRun(activity, level) {
+    level = level || diffFor("little");
+    var orders = activity.rounds.map(function (round) {
+      var idxs = round.options.map(function (_, i) { return i; });
+      if (level === "easy") {
+        var wrong = idxs.filter(function (i) { return i !== round.answer; });
+        idxs = [round.answer, wrong[0]];
+      }
+      if (level === "easy" || level === "hard") idxs = shuffle(idxs);
+      return idxs;
+    });
     return {
       activity: activity,
+      level: level,
+      orders: orders,
       round: 0,
       picked: null,
       locked: false,
@@ -1857,6 +1989,7 @@
     var a = run.activity;
     var round = a.rounds[run.round];
     var picked = run.picked;
+    var order = run.orders[run.round] || round.options.map(function (_, i) { return i; });
 
     var dots = a.rounds.map(function (_, i) {
       var cls = "play-dot";
@@ -1870,7 +2003,7 @@
       '<header class="little-play-head reveal">' +
         '<div class="little-play-emoji">' + a.emoji + "</div>" +
         "<div>" +
-          '<span class="eyebrow">' + esc(a.name) + " · " + esc(a.sense) + "</span>" +
+          '<span class="eyebrow">' + esc(a.name) + " · " + esc(a.sense) + ' · <span class="level-chip">' + diffLabel(run.level) + "</span></span>" +
           '<div class="play-dots">' + dots + "</div>" +
         "</div>" +
       "</header>" +
@@ -1880,16 +2013,17 @@
           "<h2>" + esc(round.prompt) + "</h2>" +
           '<button class="speak-btn play-speak" data-speak="' + esc(round.say) + '" aria-label="Hear the question">' + icon("speaker") + "</button>" +
         "</div>" +
-        '<div class="play-options">' + round.options.map(function (opt, i) {
+        '<div class="play-options' + (order.length === 2 ? " two" : "") + '">' + order.map(function (orig) {
+          var opt = round.options[orig];
           var cls = "play-option";
           if (picked !== null) {
-            if (i === round.answer) cls += " correct";
-            else if (i === picked) cls += " wrong";
+            if (orig === round.answer) cls += " correct";
+            else if (orig === picked) cls += " wrong";
             else cls += " dim";
           }
-          return '<button class="' + cls + '" data-action="little-option" data-i="' + i + '">' +
+          return '<button class="' + cls + '" data-action="little-option" data-i="' + orig + '" aria-label="' + esc(opt.l) + '">' +
             '<span class="play-option-emoji">' + opt.e + "</span>" +
-            '<span class="play-option-label">' + esc(opt.l) + "</span>" +
+            '<span class="play-option-label' + (run.level === "hard" ? " hide" : "") + '">' + esc(opt.l) + "</span>" +
           "</button>";
         }).join("") + "</div>" +
         (run.locked
@@ -1897,7 +2031,8 @@
           : (picked !== null ? '<div class="play-feedback no">Almost — let’s try again.</div>' : "")) +
       "</section>" +
 
-      '<p class="parent-tip">Grown-up: read the question aloud, then let your child choose. Tap 🔊 to hear it again.</p>' +
+      '<p class="parent-tip">Grown-up: read the question aloud, then let your child choose. Tap 🔊 to hear it again.' +
+        (run.level === "hard" ? " The word labels are hidden on Challenge — say the word clearly." : "") + "</p>" +
     "</div>";
   }
 
@@ -1995,6 +2130,8 @@
           "</div>" +
         "</header>" +
 
+        difficultyControl("future", "Easy: extra colony supplies, sentence hints and mystery hints · Standard: balanced · Challenge: fewer supplies, no hints, 40-word replies.") +
+
         '<div class="adventure-grid">' +
           '<a class="adventure-card chron" href="#/chronicles">' +
             '<div class="adventure-art"><span>🛰️</span><span class="adventure-tag">Science fiction · Choices</span></div>' +
@@ -2082,12 +2219,14 @@
         '<div class="page chronicles">' +
           '<a class="back-link" href="#/adventures">' + icon("back") + " Future Worlds</a>" +
           '<div class="chron-intro reveal">' +
-            '<span class="eyebrow">Chronicles · Interactive science fiction</span>' +
+            '<span class="eyebrow">Chronicles · Interactive science fiction · <span class="level-chip">' + diffLabel(diffFor("future")) + "</span></span>" +
             "<h1>" + esc(meta.title) + "</h1>" +
             '<p class="chron-tagline">' + esc(meta.tagline) + "</p>" +
             '<p class="sub">' + esc(meta.intro) + "</p>" +
             '<div class="resources-intro">' + Object.keys(RES_LABELS).map(function (k) {
-              return '<span>' + RES_ICONS[k] + " " + RES_LABELS[k] + " <strong>" + meta.startResources[k] + "</strong></span>";
+              var lvl = diffFor("future");
+              var mod = lvl === "easy" ? 10 : (lvl === "hard" ? -10 : 0);
+              return '<span>' + RES_ICONS[k] + " " + RES_LABELS[k] + " <strong>" + Math.max(0, Math.min(100, meta.startResources[k] + mod)) + "</strong></span>";
             }).join("") + "</div>" +
             '<div class="stage-actions"><button class="btn btn-primary" data-action="chron-start">Begin the mission ' + icon("arrow") + "</button></div>" +
             '<p class="chron-warning">Aim to finish with every resource above zero. There is no single perfect path — only trade-offs.</p>' +
@@ -2127,6 +2266,7 @@
     }
 
     var chapter = meta.chapters[ch.chapter];
+    var level = ch.difficulty || "standard";
     var heading = chapter.title.replace(/^Log \d+ — /, "");
     var pending = ch.pendingChoice;
     var pickedOption = pending !== null && pending !== undefined ? chapter.options[pending] : null;
@@ -2135,7 +2275,7 @@
       '<div class="page chronicles">' +
         '<a class="back-link" href="#/adventures">' + icon("back") + " Future Worlds</a>" +
         '<header class="chron-head reveal">' +
-          '<span class="eyebrow">Chronicles · Chapter ' + (ch.chapter + 1) + " of " + meta.chapters.length + "</span>" +
+          '<span class="eyebrow">Chronicles · Chapter ' + (ch.chapter + 1) + " of " + meta.chapters.length + ' · <span class="level-chip">' + diffLabel(level) + "</span></span>" +
           "<h1>" + esc(heading) + "</h1>" +
           '<p class="sub">Day ' + Math.min(40, (ch.chapter + 1) * 8) + " of the long night. The station is waiting for your decision.</p>" +
         "</header>" +
@@ -2151,6 +2291,7 @@
 
         '<section class="decision reveal">' +
           "<h2>" + (pickedOption ? "The consequence" : esc(chapter.question)) + "</h2>" +
+          (level === "hard" && !pickedOption ? '<p class="difficulty-note">Challenge mode hides the cost of each choice until you commit.</p>' : "") +
           (pickedOption
             ? '<div class="outcome-card">' +
                 '<span class="eyebrow">You chose</span>' +
@@ -2166,7 +2307,7 @@
                 return '<button class="choice" data-action="chron-choose" data-i="' + i + '">' +
                   '<span class="choice-letter">' + "ABC"[i] + "</span>" +
                   '<span class="choice-body"><strong>' + esc(opt.label) + "</strong><span>" + esc(opt.detail) + "</span></span>" +
-                  '<span class="choice-effects">' + effectChips(opt.effects) + "</span>" +
+                  '<span class="choice-effects">' + (level === "hard" ? "" : effectChips(opt.effects)) + "</span>" +
                 "</button>";
               }).join("") + "</div>") +
         "</section>" +
@@ -2176,12 +2317,17 @@
   }
 
   function chronStart() {
+    var level = diffFor("future");
     var start = EXTRA.chronicles.startResources;
+    var mod = level === "easy" ? 10 : (level === "hard" ? -10 : 0);
     var res = {};
-    Object.keys(start).forEach(function (k) { res[k] = start[k]; });
+    Object.keys(start).forEach(function (k) {
+      res[k] = Math.max(0, Math.min(100, start[k] + mod));
+    });
     state.chronicles = {
       started: true, chapter: 0, resources: res, choices: [],
-      pendingChoice: null, completed: false, ending: null, xpChapters: []
+      pendingChoice: null, completed: false, ending: null, xpChapters: [],
+      difficulty: level
     };
     saveState();
     render();
@@ -2294,15 +2440,17 @@
       renderShell("ai");
     }
 
+    var level = diffFor("future");
+    var minWords = level === "easy" ? 10 : (level === "standard" ? 20 : 40);
     var attempt = aiAttempt && aiAttempt.id === brief.id ? aiAttempt : null;
-    var steps = [true, st.vote !== null && st.vote !== undefined, st.challenge, (st.reply || "").trim().length > 10];
+    var steps = [true, st.vote !== null && st.vote !== undefined, st.challenge, wordCount(st.reply) >= minWords];
     var stepCount = steps.filter(Boolean).length;
 
     $("#view").innerHTML =
       '<div class="page ai-brief">' +
         '<a class="back-link" href="#/ai">' + icon("back") + " AI & Our Future World</a>" +
         '<header class="brief-head reveal">' +
-          '<span class="eyebrow">Briefing ' + brief.num + " · " + esc(brief.topic) + " · " + brief.minutes + " min</span>" +
+          '<span class="eyebrow">Briefing ' + brief.num + " · " + esc(brief.topic) + " · " + brief.minutes + ' min · <span class="level-chip">' + diffLabel(level) + "</span></span>" +
           "<h1>" + esc(brief.title) + "</h1>" +
           '<p class="sub">' + esc(brief.summary) + "</p>" +
           '<div class="brief-progress">' + steps.map(function (ok, i) {
@@ -2354,6 +2502,9 @@
           '<p class="challenge-sentence">' + (st.challenge
             ? esc(brief.challenge.sentence.replace("___", brief.challenge.options[brief.challenge.answer]))
             : esc(brief.challenge.sentence)) + "</p>" +
+          (level === "easy" && !st.challenge && brief.challenge.hint
+            ? '<p class="challenge-hint">' + icon("spark") + " " + esc(brief.challenge.hint) + "</p>"
+            : "") +
           (st.challenge
             ? '<div class="challenge-done">' + icon("check") + " Completed — " + esc(brief.challenge.explain) + "</div>"
             : '<div class="sentence-options">' + brief.challenge.options.map(function (opt, i) {
@@ -2370,10 +2521,14 @@
           '<span class="eyebrow">Your voice</span>' +
           "<h2>Write your reply</h2>" +
           '<p class="write-prompt">' + esc(brief.write.prompt) + "</p>" +
-          '<div class="starters">' + brief.write.starters.map(function (s, i) {
-            return '<button class="starter" data-action="ai-starter" data-i="' + i + '">' + esc(s) + "</button>";
-          }).join("") + "</div>" +
-          '<textarea id="ai-reply" rows="5" maxlength="1200" placeholder="Write three to five sentences. Use a connector like although, because or for example.">' + esc(st.reply || "") + "</textarea>" +
+          '<p class="write-requirement">' + (level === "hard"
+            ? "Challenge: at least 40 words, without sentence starters."
+            : "At least " + minWords + " words. Use a connector like although, because or for example.") + "</p>" +
+          (level === "hard" ? "" :
+            '<div class="starters">' + brief.write.starters.map(function (s, i) {
+              return '<button class="starter" data-action="ai-starter" data-i="' + i + '">' + esc(s) + "</button>";
+            }).join("") + "</div>") +
+          '<textarea id="ai-reply" rows="5" maxlength="1200" placeholder="' + (level === "hard" ? "Write at least 40 words in your own words." : "Write three to five sentences. Use a connector like although, because or for example.") + '">' + esc(st.reply || "") + "</textarea>" +
           '<div class="write-foot"><span id="ai-word-count">' + wordCount(st.reply) + " words</span>" +
             '<button class="btn btn-small btn-dark" data-action="ai-save">Save my post</button></div>' +
           ((st.reply || "").trim().length > 10
@@ -2445,6 +2600,7 @@
     }
 
     var cst = caseState(mystery.id);
+    var level = diffFor("future");
     var answered = cst.answers.length > cst.qIndex;
     var current = mystery.questions[cst.qIndex];
 
@@ -2452,7 +2608,7 @@
       '<div class="page case-page">' +
         '<a class="back-link" href="#/whodunit">' + icon("back") + " Mystery Club</a>" +
         '<header class="case-head reveal">' +
-          '<span class="eyebrow">' + esc(mystery.era) + " · " + esc(mystery.difficulty) + "</span>" +
+          '<span class="eyebrow">' + esc(mystery.era) + " · " + esc(mystery.difficulty) + ' · <span class="level-chip">' + diffLabel(level) + "</span></span>" +
           "<h1>" + esc(mystery.title) + "</h1>" +
           '<p class="sub">' + esc(mystery.brief) + "</p>" +
         "</header>" +
@@ -2482,13 +2638,22 @@
           }).join("") + "</div>" +
         "</section>" +
 
-        (cst.solved ? caseSolvedHTML(mystery, cst) : caseQuestionHTML(mystery, cst, current, answered)) +
+        (!cst.solved && level === "easy" ? caseHintHTML(mystery, cst) : "") +
+        (cst.solved ? caseSolvedHTML(mystery, cst) : caseQuestionHTML(mystery, cst, current, answered, level)) +
       "</div>";
 
     updateDocumentTitle(mystery.title);
   }
 
-  function caseQuestionHTML(mystery, cst, q, answered) {
+  function caseHintHTML(mystery, cst) {
+    return '<section class="case-hint card reveal">' +
+      '<div class="case-hint-copy"><span class="eyebrow">' + icon("spark") + " Easy-mode hint</span>" +
+        "<p>" + (cst.hintShown ? esc(mystery.hint) : "Stuck? Reveal one gentle hint — it will not solve the case for you.") + "</p></div>" +
+      (cst.hintShown ? "" : '<button class="btn btn-small btn-dark" data-action="case-hint" data-id="' + mystery.id + '">Reveal hint</button>') +
+    "</section>";
+  }
+
+  function caseQuestionHTML(mystery, cst, q, answered, level) {
     var picked = answered ? cst.answers[cst.qIndex] : null;
     var ok = picked === q.answer;
     return '<section class="deduction reveal">' +
@@ -2510,7 +2675,8 @@
         "</button>";
       }).join("") + "</div>" +
       (answered
-        ? '<div class="feedback ' + (ok ? "ok" : "no") + '"><strong>' + (ok ? "Good deduction." : "Reread the clues.") + "</strong><p>" + esc(q.explain) + "</p></div>" +
+        ? '<div class="feedback ' + (ok ? "ok" : "no") + '"><strong>' + (ok ? "Good deduction." : "Reread the clues.") + "</strong><p>" +
+            (level === "hard" ? "Explanation locked until the full solution on Challenge." : esc(q.explain)) + "</p></div>" +
           '<div class="stage-actions"><button class="btn btn-primary" data-action="case-next">' +
             (cst.qIndex === mystery.questions.length - 1 ? "Reveal the solution" : "Next question") + " " + icon("arrow") + "</button></div>"
         : '<p class="quiz-hint">Choose one answer. The evidence is all above — there is no trick.</p>') +
@@ -2633,8 +2799,10 @@
     var area = $("#ai-reply");
     if (!area) return;
     var text = area.value.trim();
-    if (text.length < 10) {
-      toast("Write at least one full sentence before posting.");
+    var level = diffFor("future");
+    var minWords = level === "easy" ? 10 : (level === "standard" ? 20 : 40);
+    if (wordCount(text) < minWords) {
+      toast("This level needs at least " + minWords + " words. Keep going.");
       area.focus();
       return;
     }
@@ -3164,6 +3332,15 @@
       case "pet-select":
         selectPet(el.getAttribute("data-id"));
         break;
+      case "set-difficulty":
+        setDifficulty(el.getAttribute("data-area"), el.getAttribute("data-level"));
+        break;
+      case "case-hint":
+        var hintCase = caseState(el.getAttribute("data-id"));
+        hintCase.hintShown = true;
+        saveState();
+        render();
+        break;
       case "little-option":
         littlePick(Number(el.getAttribute("data-i")));
         break;
@@ -3246,13 +3423,13 @@
         break;
       case "next-q":
         if (!run) break;
-        if (run.qIndex < run.lesson.quiz.length - 1) {
+        if (run.qIndex < run.questions.length - 1) {
           run.qIndex += 1;
           run.picked = null;
           render();
           scrollTop();
         } else {
-          completeLesson(run.lesson, run.answers, run.orders);
+          completeLesson(run);
           run.stage = 3;
           render();
           scrollTop();

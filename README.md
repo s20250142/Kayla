@@ -37,7 +37,8 @@ missing mosquitoes, earworms, the marathon legend, the drifting Moon, and “OK�
 Each lesson has:
 - a short reading passage with a “Did you know?” fact,
 - five useful words with pronunciation, definition and example,
-- four comprehension questions (options are shuffled on every attempt),
+- three, four or five comprehension questions depending on the difficulty
+  (options are shuffled on every attempt),
 - a writing prompt whose answer is saved locally.
 
 ### 3. Future Worlds · advanced reading, argument and logic
@@ -61,6 +62,43 @@ answer three deduction questions, then read the full solution and a recap of you
 reasoning.
 
 ---
+
+## Three difficulty levels in every stage
+
+Each stage has its own **Easy / Standard / Challenge** selector, saved with your
+progress. Changing a level affects new activities immediately, without losing your
+XP, streak or completed lessons.
+
+### Little Curio
+| Level | What changes |
+|---|---|
+| Easy | Two picture choices per round |
+| Standard | Three picture choices |
+| Challenge | Three picture choices, word labels hidden, picture order shuffled |
+
+The adult still reads the prompt aloud; the audio button is always available.
+
+### Curiosity Library
+| Level | What changes |
+|---|---|
+| Easy | 3 quiz questions; vocabulary meanings are already open |
+| Standard | 4 quiz questions; tap each word card to reveal it |
+| Challenge | 5 questions — the four reading questions plus a word-recall task where a word is missing from an example sentence |
+
+Lesson scores are recorded as percentages, so a 4/4 on Standard and a 5/5 on
+Challenge are both 100%. Each lesson remembers its best percentage and the
+difficulty of your latest attempt.
+
+### Future Worlds
+| Level | What changes |
+|---|---|
+| Easy | The colony starts with +10 of each supply; sentence-builder hints; a gentle hint for each mystery case |
+| Standard | Balanced supplies and the normal experience |
+| Challenge | The colony starts with −10 of each supply; choice costs are hidden until you commit; no sentence starters and a 40-word reply; no mystery hints and no deduction explanations until the solution |
+
+A colony mission keeps the difficulty it started with; the selector affects the
+next mission. AI briefings and mysteries use the current Future Worlds level
+straight away.
 
 ## Companions — hatch a pet with your points
 
