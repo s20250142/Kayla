@@ -869,14 +869,14 @@
             "</a>" +
             '<a class="stage-tile tile-library" href="#/library">' +
               '<span class="stage-tile-emoji">📖</span>' +
-              '<span class="stage-tile-label">Stage 2 · Reading & words · ' + diffLabel(diffFor("library")) + "</span>" +
+              '<span class="stage-tile-label">Stage 2 · Reading · ' + diffLabel(diffFor("library")) + "</span>" +
               "<strong>Curiosity Library</strong>" +
               "<span class=\"stage-tile-desc\">Fourteen true stories with five words each.</span>" +
               '<span class="stage-tile-meta">' + doneCount + " of " + ALL_LESSONS.length + " curiosities finished</span>" +
             "</a>" +
             '<a class="stage-tile tile-worlds" href="#/adventures">' +
               '<span class="stage-tile-emoji">🚀</span>' +
-              '<span class="stage-tile-label">Stage 3 · Advanced adventures · ' + diffLabel(diffFor("future")) + "</span>" +
+              '<span class="stage-tile-label">Stage 3 · Adventures · ' + diffLabel(diffFor("future")) + "</span>" +
               "<strong>Future Worlds</strong>" +
               "<span class=\"stage-tile-desc\">Colony survival, AI debates, mystery cases.</span>" +
               '<span class="stage-tile-meta">' + ((state.chronicles.completed ? 1 : 0) + stageAI + stageSolved) + " of 6 adventures complete</span>" +
@@ -3502,6 +3502,23 @@
    * ------------------------------------------------------------------ */
   var lastHash = null;
 
+  function appendSiteFooter() {
+    var view = $("#view");
+    if (!view) return;
+    var old = view.querySelector(".app-site-foot");
+    if (old) old.remove();
+    var foot = document.createElement("footer");
+    foot.className = "app-site-foot";
+    foot.innerHTML =
+      '<span class="app-site-brand">Curio</span>' +
+      '<a href="../">About the project</a>' +
+      '<span class="app-site-dot">·</span>' +
+      '<span>Created by Wong Tsz Ching, Class 2C</span>' +
+      '<span class="app-site-dot">·</span>' +
+      '<span>Progress stays on this device</span>';
+    view.appendChild(foot);
+  }
+
   function render() {
     var hash = location.hash || "#/home";
     var hashChanged = hash !== lastHash;
@@ -3561,6 +3578,7 @@
         return;
     }
 
+    appendSiteFooter();
     if (hashChanged) window.scrollTo(0, 0);
   }
 

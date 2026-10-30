@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://s20250142.github.io/Kayla/sitemap.xml
