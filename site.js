@@ -137,9 +137,9 @@
       "audience.class.title": "Classrooms",
       "audience.class.body": "No logins to manage. Students use their own device, keep their own progress, and choose the level that fits the task.",
       "author.eyebrow": "About the creator",
-      "author.name": "Wong Tsz Ching",
-      "author.class": "Class 2C",
-      "author.body": "Curio is a student-built educational project by Wong Tsz Ching of Class 2C. The aim was to make English practice feel less like homework: something you choose to open because the next story, decision or mystery is interesting.",
+      "author.name": "陳大文",
+      "author.class": "Class 3A",
+      "author.body": "Curio is a student-built educational project by 陳大文 of Class 3A. The aim was to make English practice feel less like homework: something you choose to open because the next story, decision or mystery is interesting.",
       "author.note": "The app is free to use, has no advertisements, and keeps learning data in the browser on the learner's own device.",
       "author.app": "Try the app",
       "author.repo": "View the source on GitHub",
@@ -161,7 +161,7 @@
       "footer.app": "Open the app",
       "footer.stages": "Stages",
       "footer.author": "Author",
-      "footer.credit": "Created by Wong Tsz Ching · Class 2C",
+      "footer.credit": "Created by 陳大文 · Class 3A",
       "footer.privacy": "Free · No ads · No accounts · Progress stays on your device."
     },
 
@@ -292,9 +292,9 @@
       "audience.class.title": "課堂",
       "audience.class.body": "毋須管理登入帳戶。學生用自己的裝置、保存自己的進度，並選擇適合任務的難度。",
       "author.eyebrow": "關於創作者",
-      "author.name": "Wong Tsz Ching",
-      "author.class": "2C 班",
-      "author.body": "Curio 是 2C 班 Wong Tsz Ching 的學生教育項目。目標是讓英語練習不再像功課：你會主動打開它，因為下一個故事、決定或懸案很有趣。",
+      "author.name": "陳大文",
+      "author.class": "3A 班",
+      "author.body": "Curio 是 3A 班陳大文製作的學生教育項目。目標是讓英語練習不再像功課：你會主動打開它，因為下一個故事、決定或懸案很有趣。",
       "author.note": "應用程式免費使用、沒有廣告，學習資料只保存在學習者自己裝置的瀏覽器中。",
       "author.app": "試用應用程式",
       "author.repo": "在 GitHub 查看原始碼",
@@ -316,7 +316,7 @@
       "footer.app": "開啟應用程式",
       "footer.stages": "學習階段",
       "footer.author": "作者",
-      "footer.credit": "Wong Tsz Ching 製作・2C 班",
+      "footer.credit": "陳大文 製作・3A 班",
       "footer.privacy": "免費・沒有廣告・毋須帳戶・進度保存在你的裝置。"
     }
   };

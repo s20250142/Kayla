@@ -4,7 +4,7 @@ A small, self-contained English-learning app with three stages, real progress tr
 and no dependencies, accounts, or internet connection.
 
 This repository also contains a **bilingual product website** (English / 繁體中文)
-that introduces the project. Created by **Wong Tsz Ching, Class 2C**.
+that introduces the project. Created by **陳大文, Class 3A**.
 
 - Website: `index.html` (English and Traditional Chinese)
 - App: `app/index.html`
@@ -193,7 +193,7 @@ open a specific language. Old bookmarks such as `/#/home` are redirected to
 
 ## Author
 
-**Wong Tsz Ching** · **Class 2C**
+**陳大文** · **3A 班**
 
 Curio is a student-built educational project. The website and app are free to use,
 with no accounts or advertisements. Progress is stored only in the learner's browser.
