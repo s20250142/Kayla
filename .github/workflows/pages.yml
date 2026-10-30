@@ -26,8 +26,10 @@ jobs:
 
       - name: Build static site
         run: |
-          mkdir -p _site
-          cp index.html styles.css app.js content.js content2.js pets.js _site/
+          mkdir -p _site/app
+          cp index.html site.css site.js 404.html robots.txt sitemap.xml _site/
+          cp -R assets _site/
+          cp -R app/. _site/app/
           touch _site/.nojekyll
 
       - name: Setup Pages

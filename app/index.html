@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Curio — Learn English Through Curiosity</title>
+  <meta name="description" content="Curio is a small English-learning app: short true stories, five words per story, quick quizzes, and progress that is saved on your device.">
+  <meta name="theme-color" content="#fbf7ef">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='88'%3E%F0%9F%A7%A0%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" aria-label="Main navigation">
+      <a class="brand" href="#/home">
+        <span class="brand-mark">C</span>
+        <span class="brand-text"><strong>Curio</strong><small>English through curiosity</small></span>
+      </a>
+      <nav class="nav" id="nav"></nav>
+      <div class="sidebar-foot" id="sidebar-foot"></div>
+    </aside>
+
+    <main class="view" id="view" tabindex="-1"></main>
+  </div>
+
+  <nav class="tabbar" id="tabbar" aria-label="Main navigation"></nav>
+  <div class="toast-stack" id="toast-stack" role="status" aria-live="polite"></div>
+  <div id="modal-root"></div>
+
+  <script src="content.js"></script>
+  <script src="content2.js"></script>
+  <script src="pets.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

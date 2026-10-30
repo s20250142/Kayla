@@ -3,9 +3,25 @@
 A small, self-contained English-learning app with three stages, real progress tracking,
 and no dependencies, accounts, or internet connection.
 
-Open `index.html` and start. Everything is saved in your browser.
+This repository also contains a **bilingual product website** (English / 繁體中文)
+that introduces the project. Created by **Wong Tsz Ching, Class 2C**.
+
+- Website: `index.html` (English and Traditional Chinese)
+- App: `app/index.html`
+- Live: <https://s20250142.github.io/Kayla/>
+
+Everything is saved in the browser.
 
 ---
+
+## The product website
+
+The root website is a detailed, bilingual introduction to the project: the idea,
+the three stages, the features, the learning record, the author and answers to
+common questions. It uses the screenshots in `assets/` and links directly into the
+app. The language switch changes every visible string between English and
+Traditional Chinese, updates the document language for accessibility, and is
+remembered for the next visit.
 
 ## The three stages
 
@@ -148,8 +164,8 @@ profile.
 ## Running it
 
 ### Option A — double-click
-Open `index.html` in a modern browser. The app is plain HTML, CSS and JavaScript,
-so it runs directly from disk.
+Open `index.html` to see the product website, then choose **Open the app**.
+The app lives in `app/index.html`.
 
 > Some browsers restrict `localStorage` for `file://` pages. Curio detects this and
 > keeps progress in memory for the session, but it cannot persist across reloads.
@@ -162,21 +178,55 @@ From this folder:
 python3 -m http.server 8080
 ```
 
-Then open <http://127.0.0.1:8080>. Progress will persist in that browser profile.
+- Website: <http://127.0.0.1:8080/>
+- App: <http://127.0.0.1:8080/app/>
+
+Progress will persist in that browser profile.
 
 No installation, build step, package manager, or network access is required.
+
+### Website languages
+The website has an **EN / 繁中** switch in the header. The choice is remembered in
+`localStorage` under `curio.site.lang`; append `?lang=zh` or `?lang=en` to a link to
+open a specific language. Old bookmarks such as `/#/home` are redirected to
+`/app/#/home`, so the app is still one click away.
+
+## Author
+
+**Wong Tsz Ching** · **Class 2C**
+
+Curio is a student-built educational project. The website and app are free to use,
+with no accounts or advertisements. Progress is stored only in the learner's browser.
 
 ---
 
 ## Files
 
-```
-index.html      page shell, loads the styles, content and app
-styles.css      the complete design system and responsive layout
-content.js      14 library lessons (reading, vocabulary, quiz, writing prompt)
-content2.js     Little Curio games and the three Future Worlds programmes
-pets.js         the six companions, their milestones, traits and lines
-app.js          state, routing, rendering, games, pets, progress, badges, import/export
+```text
+index.html          bilingual product website (English / 繁體中文)
+site.css            website design system and responsive layout
+site.js             language switch, mobile menu, scroll reveals, old-URL redirects
+404.html            bilingual not-found page
+robots.txt          search-engine rules
+sitemap.xml         landing page and app URL
+
+assets/             website screenshots and favicon
+  home.jpg
+  little.jpg
+  library.jpg
+  worlds.jpg
+  pet.jpg
+  mobile.jpg
+  favicon.svg
+
+app/index.html      the English-learning app shell
+app/styles.css      app design system and responsive layout
+app/content.js      14 library lessons (reading, vocabulary, quiz, writing prompt)
+app/content2.js     Little Curio games and the three Future Worlds programmes
+app/pets.js         the six companions, their milestones, traits and lines
+app/app.js          state, routing, rendering, games, pets, progress, badges, import/export
+
+.github/workflows/pages.yml   automatic GitHub Pages deployment
 ```
 
 ---
@@ -204,8 +254,8 @@ spoken English.
 ## Deploy to GitHub Pages
 
 This repository includes `.github/workflows/pages.yml`. It runs on every push
-(including merges) to `main`, copies the static files into `_site`, and deploys
-that folder to GitHub Pages.
+(including merges) to `main`, builds `_site` from the website files plus `app/`,
+and deploys that folder to GitHub Pages.
 
 One-time setup after the first push:
 
@@ -216,5 +266,6 @@ One-time setup after the first push:
 
 Live site (once deployed): <https://s20250142.github.io/Kayla/>
 
-Because all asset links are relative, the app works from the `/Kayla/` project
-path without any build step.
+Because all asset links are relative, the website and the app both work from the
+`/Kayla/` project path without a build step. The app is available at
+<https://s20250142.github.io/Kayla/app/>.

@@ -3,33 +3,432 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Curio — Learn English Through Curiosity</title>
-  <meta name="description" content="Curio is a small English-learning app: short true stories, five words per story, quick quizzes, and progress that is saved on your device.">
+  <title>Curio — English Through Curiosity</title>
+  <meta name="description" id="meta-description" content="Curio is a three-stage English learning app: sensory play for ages 3–6, fourteen true stories, interactive future worlds, saved progress and collectible companions.">
   <meta name="theme-color" content="#fbf7ef">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='88'%3E%F0%9F%A7%A0%3C/text%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="canonical" href="https://s20250142.github.io/Kayla/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Curio">
+  <meta property="og:title" id="og-title" content="Curio — English Through Curiosity">
+  <meta property="og:description" id="og-description" content="A three-stage English learning app with true stories, sensory games, interactive adventures and progress that stays on your device.">
+  <meta property="og:url" content="https://s20250142.github.io/Kayla/">
+  <meta property="og:image" content="https://s20250142.github.io/Kayla/assets/home.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Curio — English Through Curiosity">
+  <meta name="twitter:description" content="A three-stage English learning app with stories, games, adventures and companions.">
+  <meta name="twitter:image" content="https://s20250142.github.io/Kayla/assets/home.jpg">
+
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="site.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "EducationalApplication",
+    "name": "Curio",
+    "url": "https://s20250142.github.io/Kayla/",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any modern web browser",
+    "description": "A three-stage English learning app with sensory games, true stories, interactive adventures, saved progress and collectible companions.",
+    "inLanguage": ["en", "zh-Hant"],
+    "isAccessibleForFree": true,
+    "author": {
+      "@type": "Person",
+      "name": "Wong Tsz Ching"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
 </head>
 <body>
-  <div class="app">
-    <aside class="sidebar" aria-label="Main navigation">
-      <a class="brand" href="#/home">
-        <span class="brand-mark">C</span>
-        <span class="brand-text"><strong>Curio</strong><small>English through curiosity</small></span>
+  <a class="skip-link" href="#main" data-i18n="a11y.skip">Skip to content</a>
+
+  <header class="site-header" id="top">
+    <div class="header-inner">
+      <a class="brand" href="#top" aria-label="Curio home">
+        <span class="brand-mark" aria-hidden="true">C</span>
+        <span class="brand-copy">
+          <strong>Curio</strong>
+          <small data-i18n="brand.tagline">English through curiosity</small>
+        </span>
       </a>
-      <nav class="nav" id="nav"></nav>
-      <div class="sidebar-foot" id="sidebar-foot"></div>
-    </aside>
 
-    <main class="view" id="view" tabindex="-1"></main>
-  </div>
+      <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="site-nav">
+        <span class="nav-toggle-bars" aria-hidden="true"></span>
+        <span class="sr-only" data-i18n="a11y.menu">Open menu</span>
+      </button>
 
-  <nav class="tabbar" id="tabbar" aria-label="Main navigation"></nav>
-  <div class="toast-stack" id="toast-stack" role="status" aria-live="polite"></div>
-  <div id="modal-root"></div>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <a href="#product" data-i18n="nav.product">Product</a>
+        <a href="#stages" data-i18n="nav.stages">Stages</a>
+        <a href="#inside" data-i18n="nav.inside">Inside the app</a>
+        <a href="#author" data-i18n="nav.author">Author</a>
+        <a href="#faq" data-i18n="nav.faq">FAQ</a>
+      </nav>
 
-  <script src="content.js"></script>
-  <script src="content2.js"></script>
-  <script src="pets.js"></script>
-  <script src="app.js"></script>
+      <div class="header-actions">
+        <div class="lang-switch" role="group" aria-label="Language / 語言">
+          <button type="button" data-lang="en" class="active" aria-pressed="true">EN</button>
+          <button type="button" data-lang="zh" aria-pressed="false">繁中</button>
+        </div>
+        <a class="btn btn-primary btn-header" href="app/" data-i18n="cta.open">Open the app</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <span class="eyebrow" data-i18n="hero.eyebrow">A three-stage English learning app</span>
+        <h1 id="hero-title" data-i18n="hero.title">English that makes you curious.</h1>
+        <p class="hero-sub" data-i18n="hero.sub">Short true stories, sensory play and interactive adventures — with progress that follows you and a companion that grows as you learn.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="app/" data-i18n="cta.start">Open the app — free</a>
+          <a class="btn btn-ghost" href="#stages" data-i18n="cta.explore">Explore the three stages</a>
+        </div>
+        <p class="micro" data-i18n="hero.micro">No accounts. No ads. Progress stays on your device.</p>
+        <div class="hero-tags" aria-label="At a glance">
+          <span data-i18n="hero.tag1">Ages 3–6 to adult</span>
+          <span data-i18n="hero.tag2">3 difficulty levels</span>
+          <span data-i18n="hero.tag3">Works offline after loading</span>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="browser-frame" aria-hidden="true">
+          <div class="browser-bar"><i></i><i></i><i></i><span>s20250142.github.io/Kayla/app/</span></div>
+          <img src="assets/home.jpg" alt="" width="1440" height="900">
+        </div>
+        <div class="float-card float-xp">
+          <strong>+25 XP</strong>
+          <span data-i18n="hero.floatXp">Every answer counts</span>
+        </div>
+        <div class="float-card float-pet">
+          <span class="float-emoji" aria-hidden="true">🦊</span>
+          <span><strong>Momo</strong><small data-i18n="hero.floatPet">New companion hatched</small></span>
+        </div>
+        <div class="hero-note" data-i18n="hero.note">Built for three minutes a day.</div>
+      </div>
+    </section>
+
+    <section class="proof" aria-label="Curio at a glance">
+      <div class="proof-inner">
+        <div><strong>3</strong><span data-i18n="proof.stages">Learning stages</span></div>
+        <div><strong>14</strong><span data-i18n="proof.lessons">True stories</span></div>
+        <div><strong>70</strong><span data-i18n="proof.words">Useful words</span></div>
+        <div><strong>6</strong><span data-i18n="proof.pets">Companions</span></div>
+        <div><strong>3</strong><span data-i18n="proof.levels">Difficulty levels per stage</span></div>
+      </div>
+    </section>
+
+    <section class="section why" id="product">
+      <div class="section-head">
+        <span class="eyebrow" data-i18n="why.eyebrow">Why Curio</span>
+        <h2 data-i18n="why.title">Built around curiosity, not a word list.</h2>
+        <p class="section-sub" data-i18n="why.sub">Most English apps ask you to remember. Curio gives you something worth remembering — a strange fact, a difficult choice, a mystery to solve — and builds the language around it.</p>
+      </div>
+      <div class="feature-grid three">
+        <article class="feature reveal">
+          <span class="feature-number">01</span>
+          <span class="feature-icon" aria-hidden="true">📖</span>
+          <h3 data-i18n="why.card1.title">Read something worth retelling</h3>
+          <p data-i18n="why.card1.body">Every library lesson begins with a true story: a moon that is drifting away, a war against emus, the first computer bug. You finish with something to tell someone.</p>
+        </article>
+        <article class="feature reveal">
+          <span class="feature-number">02</span>
+          <span class="feature-icon" aria-hidden="true">🎯</span>
+          <h3 data-i18n="why.card2.title">Use it before you lose it</h3>
+          <p data-i18n="why.card2.body">Five words per story, a quiz that explains each answer, and a writing prompt. Words you miss come back later for review, not just once.</p>
+        </article>
+        <article class="feature reveal">
+          <span class="feature-number">03</span>
+          <span class="feature-icon" aria-hidden="true">🌱</span>
+          <h3 data-i18n="why.card3.title">See the habit, not just the score</h3>
+          <p data-i18n="why.card3.body">XP, levels, streaks and a visible record of every learning day. Your progress stays on your device, and it is yours to export.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section stages" id="stages">
+      <div class="section-head">
+        <span class="eyebrow" data-i18n="stages.eyebrow">Three stages, one journey</span>
+        <h2 data-i18n="stages.title">Start where the learner is.</h2>
+        <p class="section-sub" data-i18n="stages.sub">From a child's first spoken colour word to a teenager defending an opinion about AI, the difficulty and the subject change — the habit stays.</p>
+      </div>
+
+      <article class="stage-row reveal">
+        <div class="stage-media">
+          <div class="media-frame"><img src="assets/little.jpg" alt="Little Curio sensory colour game" data-i18n-alt="img.stage1" width="1200" height="800" loading="lazy"></div>
+          <span class="stage-badge" data-i18n="stage1.badge">Ages 3–6 · 3 minutes a day</span>
+        </div>
+        <div class="stage-copy">
+          <span class="stage-index">01</span>
+          <span class="eyebrow" data-i18n="stage1.eyebrow">Sensory &amp; daily</span>
+          <h3 data-i18n="stage1.title">Little Curio</h3>
+          <p data-i18n="stage1.body">Six picture games that turn a new English word into a sound, a colour and a movement. An adult reads the prompt aloud; the child taps, listens and says the word back.</p>
+          <ul class="check-list">
+            <li data-i18n="stage1.b1">Colours, animal sounds, shapes, textures, feelings and counting</li>
+            <li data-i18n="stage1.b2">Spoken prompts and gentle “try again” feedback</li>
+            <li data-i18n="stage1.b3">A sticker for every day of play, plus a grown-up guide</li>
+          </ul>
+          <div class="stage-meta">
+            <span data-i18n="stage1.meta1">Easy · Standard · Challenge</span>
+            <span data-i18n="stage1.meta2">No reading required</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="stage-row reverse reveal">
+        <div class="stage-media">
+          <div class="media-frame"><img src="assets/library.jpg" alt="Curiosity Library lesson cards" data-i18n-alt="img.stage2" width="1200" height="800" loading="lazy"></div>
+          <span class="stage-badge" data-i18n="stage2.badge">Reading &amp; vocabulary</span>
+        </div>
+        <div class="stage-copy">
+          <span class="stage-index">02</span>
+          <span class="eyebrow" data-i18n="stage2.eyebrow">Read, collect, write</span>
+          <h3 data-i18n="stage2.title">Curiosity Library</h3>
+          <p data-i18n="stage2.body">Fourteen original true-story lessons in clear B1–B2 English. Each one gives you five useful words, a short comprehension quiz and a prompt worth writing about.</p>
+          <ul class="check-list">
+            <li data-i18n="stage2.b1">Real subjects: space, nature, history, food, language and the mind</li>
+            <li data-i18n="stage2.b2">Every word has a definition, an example and a pronunciation button</li>
+            <li data-i18n="stage2.b3">Shuffled questions, saved written answers and spaced review</li>
+          </ul>
+          <div class="stage-meta">
+            <span data-i18n="stage2.meta1">14 lessons · 70 words</span>
+            <span data-i18n="stage2.meta2">Ages 8–12 and up</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="stage-row reveal">
+        <div class="stage-media">
+          <div class="media-frame"><img src="assets/worlds.jpg" alt="Future Worlds interactive programmes" data-i18n-alt="img.stage3" width="1200" height="800" loading="lazy"></div>
+          <span class="stage-badge" data-i18n="stage3.badge">Advanced English</span>
+        </div>
+        <div class="stage-copy">
+          <span class="stage-index">03</span>
+          <span class="eyebrow" data-i18n="stage3.eyebrow">Decide, argue, solve</span>
+          <h3 data-i18n="stage3.title">Future Worlds</h3>
+          <p data-i18n="stage3.body">Three interactive programmes for learners ready to read closely, weigh evidence and explain a point of view in English.</p>
+          <ul class="check-list">
+            <li data-i18n="stage3.b1">A five-chapter colony survival story with resource trade-offs</li>
+            <li data-i18n="stage3.b2">AI briefings with simulated forums, polls and written arguments</li>
+            <li data-i18n="stage3.b3">Two detective cases with clues, alibis and a full solution</li>
+          </ul>
+          <div class="stage-meta">
+            <span data-i18n="stage3.meta1">Ages 13+ · advanced</span>
+            <span data-i18n="stage3.meta2">Reading, logic and argument</span>
+          </div>
+        </div>
+      </article>
+
+      <div class="world-cards">
+        <article class="world-card reveal">
+          <span class="world-icon" aria-hidden="true">🛰️</span>
+          <h4 data-i18n="world1.title">Chronicles: Kepler Station</h4>
+          <p data-i18n="world1.body">Five science logs. Forty days of darkness. Every choice spends oxygen, water, food, power or morale — and the colony remembers.</p>
+          <span class="world-tag" data-i18n="world1.tag">Science fiction · systems thinking</span>
+        </article>
+        <article class="world-card reveal">
+          <span class="world-icon" aria-hidden="true">🤖</span>
+          <h4 data-i18n="world2.title">AI &amp; Our Future World</h4>
+          <p data-i18n="world2.body">Algorithms, AI tutors and deepfakes. Read a simulated forum, vote in a poll, build a complex sentence and write a reply that takes a position.</p>
+          <span class="world-tag" data-i18n="world2.tag">Debate · opinion writing</span>
+        </article>
+        <article class="world-card reveal">
+          <span class="world-icon" aria-hidden="true">🕵️</span>
+          <h4 data-i18n="world3.title">The Whodunit Mystery Club</h4>
+          <p data-i18n="world3.body">A burnt page, a cancelled train, a glove in a door. Read the evidence, test every alibi and name the culprit before the solution reveals itself.</p>
+          <span class="world-tag" data-i18n="world3.tag">Close reading · logical deduction</span>
+        </article>
+      </div>
+
+      <div class="difficulty-band reveal">
+        <div>
+          <span class="eyebrow" data-i18n="difficulty.eyebrow">One app, three levels</span>
+          <h3 data-i18n="difficulty.title">Easy, Standard or Challenge — in every stage.</h3>
+        </div>
+        <p data-i18n="difficulty.body">Change the level on any stage page. Little Curio changes the number of pictures; the Library changes the number of questions and adds a word-recall task on Challenge; Future Worlds changes colony supplies, hints and writing requirements. Your choice is saved per stage.</p>
+      </div>
+    </section>
+
+    <section class="section inside" id="inside">
+      <div class="section-head">
+        <span class="eyebrow" data-i18n="inside.eyebrow">Inside the app</span>
+        <h2 data-i18n="inside.title">A learning record that feels alive.</h2>
+        <p class="section-sub" data-i18n="inside.sub">Curio is not a library of PDFs with a score at the end. The app remembers what you have read, which words are fading and how many days in a row you have shown up.</p>
+      </div>
+
+      <div class="feature-grid two">
+        <article class="panel pet-panel reveal">
+          <div class="pet-panel-copy">
+            <span class="eyebrow" data-i18n="pet.eyebrow">Companions</span>
+            <h3 data-i18n="pet.title">Your points hatch a friend.</h3>
+            <p data-i18n="pet.body">Every 300 points warms an egg. Six companions hatch across the journey — Pip, Momo, Nori, Kiko, Lumi and Astra — each with a trait and a voice. Switching your active companion is one tap.</p>
+            <a class="text-link" href="app/#/pet" data-i18n="pet.link">Meet the companions →</a>
+          </div>
+          <div class="pet-panel-art">
+            <img src="assets/pet.jpg" alt="Curio companion page with a fox and an egg" data-i18n-alt="img.pet" width="1200" height="850" loading="lazy">
+          </div>
+        </article>
+
+        <div class="mini-grid">
+          <article class="mini-card reveal"><span aria-hidden="true">📈</span><h4 data-i18n="mini1.title">Progress you can see</h4><p data-i18n="mini1.body">XP, eight levels, a daily goal, streaks, a 14-day chart and a six-month consistency map.</p></article>
+          <article class="mini-card reveal"><span aria-hidden="true">🔁</span><h4 data-i18n="mini2.title">Words that come back</h4><p data-i18n="mini2.body">A word bank with Again / Good / Easy grading schedules each word before it fades.</p></article>
+          <article class="mini-card reveal"><span aria-hidden="true">🔒</span><h4 data-i18n="mini3.title">Local by design</h4><p data-i18n="mini3.body">No accounts, no tracking, no uploads. Export a JSON file whenever you want to move your progress.</p></article>
+          <article class="mini-card reveal"><span aria-hidden="true">📱</span><h4 data-i18n="mini4.title">Phone and desktop</h4><p data-i18n="mini4.body">The same app, with a bottom navigation bar on a phone and a sidebar on a larger screen.</p></article>
+        </div>
+      </div>
+
+      <div class="phone-proof reveal">
+        <div class="phone-frame">
+          <div class="phone-notch" aria-hidden="true"></div>
+          <img src="assets/mobile.jpg" alt="Curio on a phone" data-i18n-alt="img.phone" width="390" height="844" loading="lazy">
+        </div>
+        <div class="phone-copy">
+          <span class="eyebrow" data-i18n="phone.eyebrow">A small daily habit</span>
+          <h3 data-i18n="phone.title">Three minutes. Then back to your day.</h3>
+          <p data-i18n="phone.body">The whole experience is built for short sessions: one story, five words, four or five questions. On a phone, Curio opens in the browser and remembers where you stopped.</p>
+          <div class="phone-badges">
+            <span data-i18n="phone.b1">No app store needed</span>
+            <span data-i18n="phone.b2">Respects reduced motion</span>
+            <span data-i18n="phone.b3">Built with plain HTML, CSS and JavaScript</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section how">
+      <div class="section-head">
+        <span class="eyebrow" data-i18n="how.eyebrow">How it works</span>
+        <h2 data-i18n="how.title">Begin with one curiosity.</h2>
+      </div>
+      <ol class="steps-list">
+        <li class="reveal">
+          <span class="step-number">01</span>
+          <h3 data-i18n="how.s1.title">Choose a stage and a level</h3>
+          <p data-i18n="how.s1.body">Little Curio for sensory play, the Library for reading, or Future Worlds for an adventure. Each stage keeps its own Easy, Standard or Challenge setting.</p>
+        </li>
+        <li class="reveal">
+          <span class="step-number">02</span>
+          <h3 data-i18n="how.s2.title">Read, play and answer</h3>
+          <p data-i18n="how.s2.body">Listen, tap, read, decide. Curio explains every answer and lets you hear the words aloud. The writing prompt is saved as you type.</p>
+        </li>
+        <li class="reveal">
+          <span class="step-number">03</span>
+          <h3 data-i18n="how.s3.title">Come back tomorrow</h3>
+          <p data-i18n="how.s3.body">Your streak, review queue and companions are waiting. Three minutes today is worth more than two hours on Sunday.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section class="section audience">
+      <div class="section-head">
+        <span class="eyebrow" data-i18n="audience.eyebrow">Who it is for</span>
+        <h2 data-i18n="audience.title">One app, several kinds of learner.</h2>
+      </div>
+      <div class="audience-grid">
+        <article class="audience-card reveal">
+          <span aria-hidden="true">🏠</span>
+          <h3 data-i18n="audience.family.title">Families</h3>
+          <p data-i18n="audience.family.body">Use Little Curio with a child at the table. Read the prompt aloud, let them tap, and finish by saying the new word together.</p>
+        </article>
+        <article class="audience-card reveal">
+          <span aria-hidden="true">🎧</span>
+          <h3 data-i18n="audience.self.title">Independent learners</h3>
+          <p data-i18n="audience.self.body">Teenagers and adults can read a story on the bus, collect five words, then argue about AI or solve a case on a longer evening session.</p>
+        </article>
+        <article class="audience-card reveal">
+          <span aria-hidden="true">🏫</span>
+          <h3 data-i18n="audience.class.title">Classrooms</h3>
+          <p data-i18n="audience.class.body">No logins to manage. Students use their own device, keep their own progress, and choose the level that fits the task.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section author" id="author">
+      <div class="author-card reveal">
+        <div class="author-mark" aria-hidden="true">WT</div>
+        <div class="author-copy">
+          <span class="eyebrow" data-i18n="author.eyebrow">About the creator</span>
+          <h2 data-i18n="author.name">Wong Tsz Ching</h2>
+          <span class="author-class" data-i18n="author.class">Class 2C</span>
+          <p data-i18n="author.body">Curio is a student-built educational project by Wong Tsz Ching of Class 2C. The aim was to make English practice feel less like homework: something you choose to open because the next story, decision or mystery is interesting.</p>
+          <p class="author-note" data-i18n="author.note">The app is free to use, has no advertisements, and keeps learning data in the browser on the learner's own device.</p>
+          <div class="author-links">
+            <a class="btn btn-light btn-small" href="app/" data-i18n="author.app">Try the app</a>
+            <a class="text-link light" href="https://github.com/s20250142/Kayla" target="_blank" rel="noopener" data-i18n="author.repo">View the source on GitHub</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section faq" id="faq">
+      <div class="section-head">
+        <span class="eyebrow" data-i18n="faq.eyebrow">Questions</span>
+        <h2 data-i18n="faq.title">Good to know.</h2>
+      </div>
+      <div class="faq-list">
+        <details class="reveal" open>
+          <summary data-i18n="faq.q1">Is Curio free?</summary>
+          <p data-i18n="faq.a1">Yes. There are no accounts, no advertisements and no in-app purchases. It is a student educational project.</p>
+        </details>
+        <details class="reveal">
+          <summary data-i18n="faq.q2">What ages is it for?</summary>
+          <p data-i18n="faq.a2">Little Curio is designed for ages 3–6 with an adult nearby. The Curiosity Library suits roughly ages 8–12 and older learners who want clear B1–B2 reading. Future Worlds is for confident readers (around 13+) who enjoy argument and deduction.</p>
+        </details>
+        <details class="reveal">
+          <summary data-i18n="faq.q3">Is my progress saved?</summary>
+          <p data-i18n="faq.a3">Progress is saved in your browser’s local storage on the device you use. It is not sent to a server. You can export a JSON backup from Settings &amp; data and import it on another browser.</p>
+        </details>
+        <details class="reveal">
+          <summary data-i18n="faq.q4">Does it work offline?</summary>
+          <p data-i18n="faq.a4">Once the page and its files have loaded, the activities work in the browser. Speech uses the voices built into your device or browser. The site itself needs a connection the first time it is opened.</p>
+        </details>
+        <details class="reveal">
+          <summary data-i18n="faq.q5">Can a teacher use it with a class?</summary>
+          <p data-i18n="faq.a5">Yes. There is nothing to sign into and no class data is collected. Each student keeps a separate progress record on their own device, and the three difficulty levels make it easy to set different expectations for the same text.</p>
+        </details>
+        <details class="reveal">
+          <summary data-i18n="faq.q6">Does it replace a teacher?</summary>
+          <p data-i18n="faq.a6">No. Curio is a practice tool. It gives learners more reading, vocabulary and thinking time; a teacher still provides feedback, conversation and guidance.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="cta-band reveal">
+      <div>
+        <span class="eyebrow" data-i18n="cta.eyebrow">The next curiosity is waiting</span>
+        <h2 data-i18n="cta.title">Three minutes is enough to begin.</h2>
+        <p data-i18n="cta.sub">No sign-up. Pick a stage, choose a level, and start with one story.</p>
+      </div>
+      <a class="btn btn-primary" href="app/" data-i18n="cta.openApp">Open Curio</a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="brand-mark small" aria-hidden="true">C</span>
+        <div><strong>Curio</strong><span data-i18n="footer.tagline">English through curiosity</span></div>
+      </div>
+      <div class="footer-links">
+        <a href="app/" data-i18n="footer.app">Open the app</a>
+        <a href="#stages" data-i18n="footer.stages">Stages</a>
+        <a href="#author" data-i18n="footer.author">Author</a>
+        <a href="https://github.com/s20250142/Kayla" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <p class="footer-credit" data-i18n="footer.credit">Created by Wong Tsz Ching · Class 2C</p>
+      <p class="footer-privacy" data-i18n="footer.privacy">Free · No ads · No accounts · Progress stays on your device.</p>
+      <p class="footer-copy">© <span id="year">2026</span> Curio</p>
+    </div>
+  </footer>
+
+  <script src="site.js"></script>
 </body>
 </html>
