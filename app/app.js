@@ -3513,7 +3513,7 @@
       '<span class="app-site-brand">Curio</span>' +
       '<a href="../">About the project</a>' +
       '<span class="app-site-dot">·</span>' +
-      '<span>Created by Wong Tsz Ching, Class 2C</span>' +
+      '<span>Created by 陳大文, Class 3A</span>' +
       '<span class="app-site-dot">·</span>' +
       '<span>Progress stays on this device</span>';
     view.appendChild(foot);
